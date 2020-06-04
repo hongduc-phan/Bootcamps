@@ -7,6 +7,12 @@ dotenv.config({
 });
 
 const app = express();
+const middleware = (req, res, next) => {
+  req.hello = 'Duc Phan hello';
+  console.log('111');
+  next();
+};
+if (process.env.NODE_ENV === 'development') app.use(middleware);
 
 // Mount routers
 app.use('/api/v1/bootcamps', bootcamps);

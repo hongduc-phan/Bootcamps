@@ -6,7 +6,7 @@ exports.getBootcamps = (req, res, next) => {
 };
 
 exports.createBootcamps = (req, res, next) => {
-  console.log(req.params.id);
+  console.log('controller');
   res.status(201).json({
     success: true,
     msg: 'create bootcamp',
