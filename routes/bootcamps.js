@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const bodyParser = require('body-parser');
 
 const {
   getBootcamps,
@@ -7,7 +8,8 @@ const {
   modifyBootcamp,
 } = require('../controllers/bootcamps');
 
-router.route('/').get(getBootcamps).post(createBootcamps);
+const jsonParser = bodyParser.json();
+router.route('/').get(getBootcamps).post(jsonParser, createBootcamps);
 router.put('/:id', modifyBootcamp);
 
 module.exports = router;
