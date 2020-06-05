@@ -1,6 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
-// var bodyParser = require('body-parser');
+var bodyParser = require('body-parser');
 
 const connDB = require('./config/db');
 // Load env vars
@@ -15,8 +15,8 @@ const bootcamps = require('./routes/bootcamps');
 
 const app = express();
 
-// // parse application/json
-// app.use(bodyParser.json());
+// parse application/json
+app.use(bodyParser.json());
 
 const middleware = (req, res, next) => {
   req.hello = 'Duc Phan hello';

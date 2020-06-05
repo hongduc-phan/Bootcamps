@@ -1,5 +1,6 @@
 const Bootcamps = require('../models/Bootcamps');
 
+// Get all
 exports.getBootcamps = async (req, res, next) => {
   try {
     const bootcamps = await Bootcamps.find();
@@ -22,6 +23,7 @@ exports.getBootcamps = async (req, res, next) => {
   }
 };
 
+// get 1 bootcamp by id
 exports.getBootcampById = async (req, res, next) => {
   try {
     const bootcamp = await Bootcamps.findById(req.params.id);
@@ -43,6 +45,7 @@ exports.getBootcampById = async (req, res, next) => {
   }
 };
 
+// Create new botcamp
 exports.createBootcamps = async (req, res, next) => {
   console.log(Bootcamps);
   try {
@@ -59,10 +62,54 @@ exports.createBootcamps = async (req, res, next) => {
   }
 };
 
-exports.modifyBootcamp = (req, res, next) => {
-  console.log(req.params.id);
-  res.status(202).json({
-    success: true,
-    msg: 'modify bootcamp',
-  });
+// Put = modify exist 1 bootcamp by Id
+exports.modifyBootcamp = async (req, res, next) => {
+  try {
+    const bootcamp = await Bootcamps.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    if (!bootcamp) {
+      return res.status(400).json({
+        success: false,
+        error: 'do not have bootcamp which has same id',
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data: bootcamp,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+// Delete 1 exist bootcamp by Id
+exports.deleteBootcampById = async (req, res, next) => {
+  try {
+    const bootcamp = await Bootcamps.findByIdAndDelete(req.params.id);
+    if (!bootcamp) {
+      return res.status(400).json({
+        success: false,
+        error: 'do not have bootcamp which has same id',
+      });
+    }
+    const bootcamps = await Bootcamps.find();
+    res.status(200).json({
+      success: true,
+      data: bootcamps,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message,
+    });
+  }
 };
