@@ -1,28 +1,15 @@
 const Bootcamps = require('../models/Bootcamps');
 const ErrorResponse = require('../utils/errorResponse');
+const asyncHandler = require('../middlewares/async');
 
 // Get all
-exports.getBootcamps = async (req, res, next) => {
-  try {
-    const bootcamps = await Bootcamps.find();
-    if (!bootcamps) {
-      res.status(400).json({
-        success: false,
-        error: 'do not have data',
-      });
-    } else {
-      res.status(200).json({
-        success: true,
-        data: bootcamps,
-      });
-    }
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      error: error.message,
-    });
-  }
-};
+exports.getBootcamps = asyncHandler(async (req, res, next) => {
+  const bootcamps = await Bootcamps.find();
+  res.status(200).json({
+    success: true,
+    data: bootcamps,
+  });
+});
 
 // get 1 bootcamp by id
 exports.getBootcampById = async (req, res, next) => {
@@ -50,70 +37,45 @@ exports.getBootcampById = async (req, res, next) => {
 };
 
 // Create new botcamp
-exports.createBootcamps = async (req, res, next) => {
+exports.createBootcamps = asyncHandler(async (req, res, next) => {
   console.log(Bootcamps);
-  try {
-    const bootcamp = await Bootcamps.create(req.body);
-    res.status(201).json({
-      success: true,
-      data: bootcamp,
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
+  const bootcamp = await Bootcamps.create(req.body);
+  res.status(201).json({
+    success: true,
+    data: bootcamp,
+  });
+});
 
 // Put = modify exist 1 bootcamp by Id
-exports.modifyBootcamp = async (req, res, next) => {
-  try {
-    const bootcamp = await Bootcamps.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-    if (!bootcamp) {
-      return res.status(400).json({
-        success: false,
-        error: 'do not have bootcamp which has same id',
-      });
-    }
-    res.status(200).json({
-      success: true,
-      data: bootcamp,
-    });
-  } catch (error) {
-    res.status(400).json({
+exports.modifyBootcamp = asyncHandler(async (req, res, next) => {
+  const bootcamp = await Bootcamps.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  if (!bootcamp) {
+    return res.status(400).json({
       success: false,
-      error: error.message,
+      error: 'do not have bootcamp which has same id',
     });
   }
-};
+  res.status(200).json({
+    success: true,
+    data: bootcamp,
+  });
+});
 
 // Delete 1 exist bootcamp by Id
-exports.deleteBootcampById = async (req, res, next) => {
-  try {
-    const bootcamp = await Bootcamps.findByIdAndDelete(req.params.id);
-    if (!bootcamp) {
-      return res.status(400).json({
-        success: false,
-        error: 'do not have bootcamp which has same id',
-      });
-    }
-    const bootcamps = await Bootcamps.find();
-    res.status(200).json({
-      success: true,
-      data: bootcamps,
-    });
-  } catch (error) {
-    res.status(400).json({
+exports.deleteBootcampById = asyncHandler(async (req, res, next) => {
+  const bootcamp = await Bootcamps.findByIdAndDelete(req.params.id);
+  if (!bootcamp) {
+    return res.status(400).json({
       success: false,
-      error: error.message,
+      error: 'do not have bootcamp which has same id',
     });
   }
-};
+  const bootcamps = await Bootcamps.find();
+  res.status(200).json({
+    success: true,
+    data: bootcamps,
+  });
+});
