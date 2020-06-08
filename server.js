@@ -13,6 +13,7 @@ dotenv.config({
 connDB();
 
 const bootcamps = require('./routes/bootcamps');
+const register = require('./routes/auth');
 
 const app = express();
 
@@ -27,6 +28,7 @@ if (process.env.NODE_ENV === 'development') app.use(middleware);
 
 // Mount routers
 app.use('/api/v1/bootcamps', bootcamps);
+app.use('/api/v1/auth', register);
 
 app.use(errorHandler);
 

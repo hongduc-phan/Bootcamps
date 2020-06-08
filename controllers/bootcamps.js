@@ -38,7 +38,6 @@ exports.getBootcampById = async (req, res, next) => {
 
 // Create new botcamp
 exports.createBootcamps = asyncHandler(async (req, res, next) => {
-  console.log(Bootcamps);
   const bootcamp = await Bootcamps.create(req.body);
   res.status(201).json({
     success: true,
