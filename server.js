@@ -17,6 +17,7 @@ const register = require('./routes/auth');
 
 const app = express();
 
+app.use(bodyParser.urlencoded({ extended: true }));
 // parse application/json
 app.use(bodyParser.json());
 
