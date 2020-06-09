@@ -1,8 +1,8 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middlewares/async');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
-const jwt = require('jsonwebtoken');
 
 exports.register = asyncHandler(async (req, res, next) => {
   const { name, email, password, role } = req.body;

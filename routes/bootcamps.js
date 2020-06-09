@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 
+const { protect } = require('../middlewares/auth');
 const {
   getBootcamps,
   createBootcamps,
@@ -10,13 +11,12 @@ const {
   deleteBootcampById,
 } = require('../controllers/bootcamps');
 
-const jsonParser = bodyParser.json();
-router.route('/').get(getBootcamps).post(jsonParser, createBootcamps);
+router.route('/').get(getBootcamps).post(protect, createBootcamps);
 // router.put('/:id', modifyBootcamp);
 router
   .route('/:id')
   .get(getBootcampById)
-  .delete(deleteBootcampById)
-  .put(modifyBootcamp);
+  .delete(protect, deleteBootcampById)
+  .put(protect, modifyBootcamp);
 
 module.exports = router;
