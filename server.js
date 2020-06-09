@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 var bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const errorHandler = require('./middlewares/error');
 
 const connDB = require('./config/db');
@@ -20,6 +21,9 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 // parse application/json
 app.use(bodyParser.json());
+
+//Cookie parser
+app.use(cookieParser());
 
 const middleware = (req, res, next) => {
   req.hello = 'Duc Phan hello';
