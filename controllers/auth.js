@@ -2,6 +2,7 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middlewares/async');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
+var jwt = require('jsonwebtoken');
 
 exports.register = asyncHandler(async (req, res, next) => {
   const { name, email, password, role } = req.body;
@@ -46,7 +47,33 @@ exports.login = asyncHandler(async (req, res, next) => {
   }
 
   const user = await User.findOne({ email }).select('+password');
-  console.log(user);
+
+  // User.findOne({ email }, async (error, user) => {
+  //   const isMatch = await user.matchPassword(password);
+
+  //   if (!user) {
+  //     return next(new ErrorResponse(error.message), 401);
+  //   } else if (!isMatch) {
+  //     return next(new ErrorResponse('Invalid credentials'), 401);
+  //   } else if (user && isMatch) {
+  //     const { _id } = user;
+  //     const payload = { _id };
+  //     const jwtToken = jwt.sign(payload, process.env.JWT_SECRET, {
+  //       expiresIn: process.env.JWT_EXPIRE,
+  //     });
+  //     const jsonResponse = {
+  //       access_token: jwtToken,
+  //       user: {
+  //         email: user.email,
+  //         id: _id,
+  //       },
+  //     };
+  //     res.status(200).json(jsonResponse);
+  //   } else {
+  //     res.json({ error: 'Login Error' });
+  //   }
+  // });
+
   if (!user) {
     return next(new ErrorResponse('Invalid credentials'), 401);
   }
