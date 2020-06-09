@@ -101,3 +101,14 @@ const sendTokenResponse = (user, statusCode, res) => {
     token,
   });
 };
+
+// @route Get /api/v1/auth/me
+exports.getMe = asyncHandler(async (req, res, next) => {
+  // req.user.id from protect middleware
+  const user = await User.findById(req.user.id);
+
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
+});
