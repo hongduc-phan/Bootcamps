@@ -23,7 +23,7 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'Please input valid password'],
-    minlength: 6,
+    minlength: 10,
     select: false,
   },
   resetPasswordToken: String,
@@ -34,7 +34,7 @@ const UserSchema = new mongoose.Schema({
   },
   bootcamps: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.ObjectId,
       ref: 'Bootcamp',
     },
   ],
@@ -60,7 +60,7 @@ UserSchema.methods.getSignedJwtToken = function () {
 
 // Match user entered password to hashed password in db
 UserSchema.methods.matchPassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
+  return bcrypt.compare(enteredPassword, this.password);
 };
 
 module.exports = mongoose.model('User', UserSchema);

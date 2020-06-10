@@ -43,12 +43,24 @@ exports.createBootcamps = asyncHandler(async (req, res, next) => {
   req.body.user = req.user.id;
   // Find current user
   const user = await User.findById(req.user.id).select('+password');
-  console.log(user);
+
+  // Only admin account can post more than one bootcamp
+  if (user.role !== 'admin') {
+    return next(
+      new ErrorResponse(
+        `The user with ${user.role} can not post more than one bootcamp`,
+        400
+      )
+    );
+  }
+
   // create new bootcamp
   const bootcamp = await Bootcamps.create(req.body);
   // Push and save new bootcamp to current user
   user.bootcamps.push(bootcamp);
-  user.save();
+  await user.updateOne({
+    bootcamps: user.bootcamps,
+  });
 
   res.status(201).json({
     success: true,
@@ -77,6 +89,21 @@ exports.modifyBootcamp = asyncHandler(async (req, res, next) => {
 // Delete 1 exist bootcamp by Id
 exports.deleteBootcampById = asyncHandler(async (req, res, next) => {
   const bootcamp = await Bootcamps.findByIdAndDelete(req.params.id);
+  // Get current user
+  const user = req.user;
+
+  // Only admin or the owner of bootcamp can delete the bootcamp
+  if (
+    user.role !== 'admin' ||
+    user.id.toString() !== req.params.id.toString()
+  ) {
+    return next(
+      new ErrorResponse(
+        `This user account ${user.email} can not delete this bootcamp`,
+        401
+      )
+    );
+  }
   if (!bootcamp) {
     return res.status(400).json({
       success: false,

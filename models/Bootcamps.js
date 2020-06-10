@@ -98,9 +98,9 @@ const BootcampSchema = new mongoose.Schema({
     default: Date.now,
   },
   user: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.ObjectId,
     ref: 'User',
-    require: true,
+    required: true,
   },
 });
 
