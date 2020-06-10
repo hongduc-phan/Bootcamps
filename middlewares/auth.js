@@ -28,3 +28,18 @@ exports.protect = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse(err.message, 401));
   }
 });
+
+// GRant access to specific roles
+exports.authorization = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new ErrorResponse(
+          `User role ${req.user.role} of ${req.user.email} can not access`,
+          401
+        )
+      );
+    }
+    next();
+  };
+};
