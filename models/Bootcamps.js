@@ -97,6 +97,11 @@ const BootcampSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    require: true,
+  },
 });
 
 BootcampSchema.pre('save', function (next) {

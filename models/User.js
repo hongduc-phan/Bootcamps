@@ -32,6 +32,12 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  bootcamps: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Bootcamp',
+    },
+  ],
 });
 
 UserSchema.pre('save', async function (next) {

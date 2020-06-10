@@ -1,6 +1,7 @@
 const Bootcamps = require('../models/Bootcamps');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middlewares/async');
+const User = require('../models/User');
 
 // Get all
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
@@ -36,9 +37,19 @@ exports.getBootcampById = async (req, res, next) => {
   }
 };
 
-// Create new botcamp
+// Create new bootcamp
 exports.createBootcamps = asyncHandler(async (req, res, next) => {
+  // Add user to req.body
+  req.body.user = req.user.id;
+  // Find current user
+  const user = await User.findById(req.user.id).select('+password');
+  console.log(user);
+  // create new bootcamp
   const bootcamp = await Bootcamps.create(req.body);
+  // Push and save new bootcamp to current user
+  user.bootcamps.push(bootcamp);
+  user.save();
+
   res.status(201).json({
     success: true,
     data: bootcamp,
