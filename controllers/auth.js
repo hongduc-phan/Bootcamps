@@ -3,6 +3,7 @@ const asyncHandler = require('../middlewares/async');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
+const sendEmail = require('../utils/sendEmail');
 
 exports.register = asyncHandler(async (req, res, next) => {
   const { name, email, password, role } = req.body;
@@ -113,4 +114,60 @@ exports.getMe = asyncHandler(async (req, res, next) => {
     success: true,
     data: user,
   });
+});
+
+// @route POST /api/v1/auth/forgotpassword
+exports.forgotPassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({
+    email: req.body.email,
+  });
+  if (!user) {
+    return next(new ErrorResponse('There is no user with that email'), 404);
+  }
+
+  // Get reset token
+  const resetToken = user.getResetPasswordToken();
+
+  // Save to DB
+  await user.save({
+    validateBeforeSave: false,
+  });
+
+  // Create reset url
+  // https://localhost/api/v1/resetpasspassword/passwordtoken
+  const resetUrl = `${req.protocal}://${req.get(
+    'host'
+  )}/api/v1/resetpassword/${resetToken}`;
+
+  const message = `You are receiving this email because 
+  you has requested the reset of a password. 
+  Please click the link to reset password${resetUrl}`;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: 'Password reset token',
+      message,
+    });
+
+    res.status(202).json({
+      success: true,
+      data: 'Email sent',
+    });
+  } catch (error) {
+    user.getResetPasswordToken = undefined;
+    user.getResetPasswordExpire = undefined;
+
+    await user.save({ validateBeforeSave: false });
+
+    return next(new ErrorResponse(error.message), 500);
+  }
+
+  // res.status(200).json({
+  //   success: true,
+  //   data: {
+  //     email: req.body.email,
+  //     resetToken: resetToken,
+  //   },
+  // });
 });
